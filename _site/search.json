@@ -1,0 +1,743 @@
+[
+
+
+{
+"title": "Captum",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.captum.html",
+"summary": ""
+}
+
+
+
+{
+"title": "Callback",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.core.html",
+"summary": "Basic callbacks for Learner"
+}
+
+,
+
+{
+"title": "CutMix Callback",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.cutmix.html",
+"summary": "Callback to apply <a href='https://arxiv.org/pdf/1905.04899.pdf'>CutMix</a> data augmentation technique to the training data."
+}
+
+,
+
+{
+"title": "Data Callbacks",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.data.html",
+"summary": "Callbacks which work with a learner's data"
+}
+
+,
+
+{
+"title": "Mixed precision training",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.fp16.html",
+"summary": "Callback and utility functions to allow mixed precision training"
+}
+
+,
+
+{
+"title": "Model hooks",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.hook.html",
+"summary": "Callback and helper function to add hooks in models"
+}
+
+,
+
+{
+"title": "Mixup callback",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.mixup.html",
+"summary": "Callback to apply MixUp data augmentation to your training"
+}
+
+,
+
+{
+"title": "Neptune.ai",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.neptune.html",
+"summary": "Integration with <a href='https://www.neptune.ai'>neptune.ai</a>."
+}
+
+,
+
+{
+"title": "Progress and logging callbacks",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.progress.html",
+"summary": "Callback and helper function to track progress of training or log results"
+}
+
+,
+
+{
+"title": "Callback for RNN training",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.rnn.html",
+"summary": "Callback that uses the outputs of language models to add AR and TAR regularization"
+}
+
+,
+
+{
+"title": "Hyperparam schedule",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.schedule.html",
+"summary": "Callback and helper functions to schedule any hyper-parameter"
+}
+
+,
+
+{
+"title": "Tensorboard",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.tensorboard.html",
+"summary": "Integration with <a href='https://www.tensorflow.org/tensorboard'>tensorboard</a>"
+}
+
+,
+
+{
+"title": "Tracking callbacks",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.tracker.html",
+"summary": "Callbacks that make decisions depending how a monitored metric/loss behaves"
+}
+
+,
+
+{
+"title": "Tracking callbacks",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.training.html",
+"summary": "Callbacks that make decisions depending how a monitored metric/loss behaves"
+}
+
+,
+
+{
+"title": "Wandb",
+"tags": "",
+"keywords": "fastai",
+"url": "callback.wandb.html",
+"summary": "Integration with <a href='https://docs.wandb.com/'>Weights & Biases</a>"
+}
+
+,
+
+{
+"title": "Collaborative filtering",
+"tags": "",
+"keywords": "fastai",
+"url": "collab.html",
+"summary": "Tools to quickly get the data and train models suitable for collaborative filtering"
+}
+
+,
+
+{
+"title": "Data block",
+"tags": "",
+"keywords": "fastai",
+"url": "data.block.html",
+"summary": "High level API to quickly get your data in a `DataLoaders`"
+}
+
+,
+
+{
+"title": "Data core",
+"tags": "",
+"keywords": "fastai",
+"url": "data.core.html",
+"summary": "Core functionality for gathering data"
+}
+
+,
+
+{
+"title": "External data",
+"tags": "",
+"keywords": "fastai",
+"url": "data.external.html",
+"summary": "Helper functions to download the fastai datasets"
+}
+
+,
+
+{
+"title": "Title",
+"tags": "",
+"keywords": "fastai",
+"url": "data.load.html",
+"summary": ""
+}
+
+,
+
+{
+"title": "Helper functions for processing data and basic transforms",
+"tags": "",
+"keywords": "fastai",
+"url": "data.transforms.html",
+"summary": "Functions for getting, splitting, and labeling data, as well as generic transforms"
+}
+
+,
+
+{
+"title": "Distributed and parallel training",
+"tags": "",
+"keywords": "fastai",
+"url": "distributed.html",
+"summary": "Callbacks and helper functions to train in parallel or use distributed training"
+}
+
+,
+
+{
+"title": "Data block examples",
+"tags": "",
+"keywords": "fastai",
+"url": "examples.html",
+"summary": "Examples for computer vision, NLP, and tabular"
+}
+
+
+
+,
+
+{
+"title": "Welcome to fastai v2",
+"tags": "",
+"keywords": "fastai",
+"url": "",
+"summary": "NB: This is still in early development. Use v1 unless you want to contribute to the next version of fastai"
+}
+
+,
+
+{
+"title": "Interpretation",
+"tags": "",
+"keywords": "fastai",
+"url": "interpret.html",
+"summary": "Classes to build objects to better interpret predictions of a model"
+}
+
+,
+
+{
+"title": "Layers",
+"tags": "",
+"keywords": "fastai",
+"url": "layers.html",
+"summary": "Custom fastai layers and basic functions to grab them."
+}
+
+,
+
+{
+"title": "Learner",
+"tags": "",
+"keywords": "fastai",
+"url": "learner.html",
+"summary": "Basic class for handling the training loop"
+}
+
+,
+
+{
+"title": "Transfer learning in computer vision",
+"tags": "",
+"keywords": "fastai",
+"url": "learning.html",
+"summary": "Fine-tuning a pretrained model on the pets dataset."
+}
+
+,
+
+{
+"title": "Medical Imaging",
+"tags": "",
+"keywords": "fastai",
+"url": "medical.imaging.html",
+"summary": "Helpers for working with DICOM files"
+}
+
+,
+
+{
+"title": "Medical Text",
+"tags": "",
+"keywords": "fastai",
+"url": "medical.text.html",
+"summary": "Medical NLP data and models"
+}
+
+,
+
+{
+"title": "Metrics",
+"tags": "",
+"keywords": "fastai",
+"url": "metrics.html",
+"summary": "Definition of the metrics that can be used in training models"
+}
+
+,
+
+{
+"title": "Tutorial - Migrating from pure PyTorch",
+"tags": "",
+"keywords": "fastai",
+"url": "migrating.html",
+"summary": "Incrementally adding fastai goodness to your PyTorch models"
+}
+
+,
+
+{
+"title": "Optimizer",
+"tags": "",
+"keywords": "fastai",
+"url": "optimizer.html",
+"summary": "Define the general fastai optimizer and the variants"
+}
+
+,
+
+{
+"title": "Title",
+"tags": "",
+"keywords": "fastai",
+"url": "pytorch_doc.html",
+"summary": ""
+}
+
+
+
+
+
+,
+
+{
+"title": "Synthetic Learner",
+"tags": "",
+"keywords": "fastai",
+"url": "synth.learner.html",
+"summary": "For quick testing of the training loop and Callbacks"
+}
+
+,
+
+{
+"title": "Tabular core",
+"tags": "",
+"keywords": "fastai",
+"url": "tabular.core.html",
+"summary": "Basic function to preprocess tabular data before assembling it in a `DataLoaders`."
+}
+
+,
+
+{
+"title": "Tabular data",
+"tags": "",
+"keywords": "fastai",
+"url": "tabular.data.html",
+"summary": "Helper functions to get data in a `DataLoaders` in the tabular application and higher class `TabularDataLoaders`"
+}
+
+,
+
+{
+"title": "Tabular learner",
+"tags": "",
+"keywords": "fastai",
+"url": "tabular.learner.html",
+"summary": "The function to immediately get a `Learner` ready to train for tabular data"
+}
+
+,
+
+{
+"title": "Tabular model",
+"tags": "",
+"keywords": "fastai",
+"url": "tabular.model.html",
+"summary": "A basic model that can be used on tabular data"
+}
+
+,
+
+{
+"title": "Tabular with rapids",
+"tags": "",
+"keywords": "fastai",
+"url": "tabular.rapids.html",
+"summary": "Basic functions to preprocess tabular data before assembling it in a [`DataLoaders`](/data.core.html#DataLoaders) on the GPU."
+}
+
+,
+
+{
+"title": "Test",
+"tags": "",
+"keywords": "fastai",
+"url": "test.html",
+"summary": "Helper functions to quickly write tests in notebooks"
+}
+
+,
+
+{
+"title": "Synthetic Learner",
+"tags": "",
+"keywords": "fastai",
+"url": "test_utils.html",
+"summary": "For quick testing of the training loop and Callbacks"
+}
+
+,
+
+{
+"title": "Text core",
+"tags": "",
+"keywords": "fastai",
+"url": "text.core.html",
+"summary": "Basic function to preprocess text before assembling it in a `DataLoaders`."
+}
+
+,
+
+{
+"title": "Text data",
+"tags": "",
+"keywords": "fastai",
+"url": "text.data.html",
+"summary": "Functions and transforms to help gather text data in a `Datasets`"
+}
+
+,
+
+{
+"title": "Learner for the text application",
+"tags": "",
+"keywords": "fastai",
+"url": "text.learner.html",
+"summary": "All the functions necessary to build `Learner` suitable for transfer learning in NLP"
+}
+
+,
+
+{
+"title": "AWD-LSTM",
+"tags": "",
+"keywords": "fastai",
+"url": "text.models.awdlstm.html",
+"summary": "AWD LSTM from <a href='https://arxiv.org/pdf/1708.02182.pdf'>Smerity et al.</a>"
+}
+
+,
+
+{
+"title": "Core text modules",
+"tags": "",
+"keywords": "fastai",
+"url": "text.models.core.html",
+"summary": "Contain the modules common between different architectures and the generic functions to get models"
+}
+
+,
+
+{
+"title": "QRNN",
+"tags": "",
+"keywords": "fastai",
+"url": "text.models.qrnn.html",
+"summary": "Quasi-recurrent neural networs introduced in <a href='https://arxiv.org/abs/1611.01576'>Bradbury et al.</a>"
+}
+
+
+
+,
+
+{
+"title": "Torch Core",
+"tags": "",
+"keywords": "fastai",
+"url": "torch_core.html",
+"summary": "Basic pytorch functions used in the fastai library"
+}
+
+,
+
+{
+"title": "Collaborative filtering",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.collab.html",
+"summary": "Using the fastai library for collaborative filtering."
+}
+
+,
+
+{
+"title": "Data block tutorial",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.datablock.html",
+"summary": "Using the data block accross all applications"
+}
+
+,
+
+{
+"title": "Tutorials",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.html",
+"summary": "To help you get started"
+}
+
+,
+
+{
+"title": "Tutorial - Training a model on Imagenette",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.imagenette.html",
+"summary": "A dive into the layered API of fastai in computer vision"
+}
+
+,
+
+{
+"title": "Tutorial - Binary classification of chest X-rays",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.medical_imaging.html",
+"summary": "In this tutorial we will build a classifier that distinguishes between chest X-rays with pneumothorax and chest X-rays without pneumothorax. The image data is loaded directly from the DICOM source files, so no prior DICOM data handling is needed."
+}
+
+,
+
+{
+"title": "Tutorial - Assemble the data on the pets dataset",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.pets.html",
+"summary": "Using `Datasets`, `Pipeline`, `TfmdLists` and `Transform` in computer vision"
+}
+
+,
+
+{
+"title": "Tutorial - Using fastai on a custom new task",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.siamese.html",
+"summary": "How to use the mid-level API for data collection, model creation and training"
+}
+
+,
+
+{
+"title": "Tabular training",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.tabular.html",
+"summary": "How to use the tabular application in fastai"
+}
+
+,
+
+{
+"title": "Transfer learning in text",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.text.html",
+"summary": "How to fine-tune a language model and train a classifier"
+}
+
+,
+
+{
+"title": "Tutorial - Transformers",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.transformers.html",
+"summary": "An example of how to incorporate the transfomers library from HuggingFace with fastai"
+}
+
+,
+
+{
+"title": "Computer vision",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.vision.html",
+"summary": "Using the fastai library in computer vision."
+}
+
+,
+
+{
+"title": "Tutorial - Assemble the data on the wikitext dataset",
+"tags": "",
+"keywords": "fastai",
+"url": "tutorial.wikitext.html",
+"summary": "Using `Datasets`, `Pipeline`, `TfmdLists` and `Transform` in text"
+}
+
+,
+
+{
+"title": "Synthetic Learner",
+"tags": "",
+"keywords": "fastai",
+"url": "utils.html",
+"summary": "For quick testing of the training loop and Callbacks"
+}
+
+,
+
+{
+"title": "Data augmentation in computer vision",
+"tags": "",
+"keywords": "fastai",
+"url": "vision.augment.html",
+"summary": "Transforms to apply data augmentation in Computer Vision"
+}
+
+,
+
+{
+"title": "Core vision",
+"tags": "",
+"keywords": "fastai",
+"url": "vision.core.html",
+"summary": "Basic image opening/processing functionality"
+}
+
+,
+
+{
+"title": "Vision data",
+"tags": "",
+"keywords": "fastai",
+"url": "vision.data.html",
+"summary": "Helper functions to get data in a `DataLoaders` in the vision application and higher class `ImageDataLoaders`"
+}
+
+,
+
+{
+"title": "GAN",
+"tags": "",
+"keywords": "fastai",
+"url": "vision.gan.html",
+"summary": "Basic support for <a href='https://arxiv.org/abs/1406.2661'>Generative Adversial Networks</a>"
+}
+
+,
+
+{
+"title": "Learner for the vision applications",
+"tags": "",
+"keywords": "fastai",
+"url": "vision.learner.html",
+"summary": "All the functions necessary to build `Learner` suitable for transfer learning in computer vision"
+}
+
+,
+
+{
+"title": "Dynamic UNet",
+"tags": "",
+"keywords": "fastai",
+"url": "vision.models.unet.html",
+"summary": "Unet model using PixelShuffle ICNR upsampling that can be built on top of any pretrained architecture"
+}
+
+,
+
+{
+"title": "XResnet",
+"tags": "",
+"keywords": "fastai",
+"url": "vision.models.xresnet.html",
+"summary": "Resnet from bags of tricks paper"
+}
+
+,
+
+{
+"title": "Vision utils",
+"tags": "",
+"keywords": "fastai",
+"url": "vision.utils.html",
+"summary": "Some utils function to quickly download a bunch of images, check them and pre-resize them"
+}
+
+,
+
+{
+"title": "Vision widgets",
+"tags": "",
+"keywords": "fastai",
+"url": "vision.widgets.html",
+"summary": "ipywidgets for images"
+}
+
+,
+
+{
+"title": "Title",
+"tags": "",
+"keywords": "fastai",
+"url": "xse.resnext.html",
+"summary": "summary"
+}
+
+,
+
+{
+"title": "Title",
+"tags": "",
+"keywords": "fastai",
+"url": "xse_resnext.html",
+"summary": "summary"
+}
+
+
+
+
+]

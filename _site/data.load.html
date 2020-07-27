@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="keywords" content=" fastai">
+<title>Title | fastai</title>
+<link rel="stylesheet" href="/css/syntax.css">
+
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">-->
+<link rel="stylesheet" href="/css/modern-business.css">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/customstyles.css">
+<link rel="stylesheet" href="/css/boxshadowproperties.css">
+<!-- most color styles are extracted out to here -->
+<link rel="stylesheet" href="/css/theme-blue.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="/js/jquery.navgoco.min.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement( document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "[%", right: "%]", display: true},
+      {left: "$", right: "$", display: false}
+    ]}
+  );
+});
+</script>
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- Anchor.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/2.0.0/anchor.min.js"></script>
+<script src="/js/toc.js"></script>
+<script src="/js/customscripts.js"></script>
+
+<link rel="shortcut icon" href="/images/favicon.ico?">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<link rel="alternate" type="application/rss+xml" title="fastai2" href="http://localhost:4000/feed.xml">
+
+
+    <script>
+        $(document).ready(function() {
+            // Initialize navgoco with default options
+            $("#mysidebar").navgoco({
+                caretHtml: '',
+                accordion: true,
+                openClass: 'active', // open
+                save: false, // leave false or nav highlighting doesn't work right
+                cookie: {
+                    name: 'navgoco',
+                    expires: false,
+                    path: '/'
+                },
+                slide: {
+                    duration: 400,
+                    easing: 'swing'
+                }
+            });
+
+            $("#collapseAll").click(function(e) {
+                e.preventDefault();
+                $("#mysidebar").navgoco('toggle', false);
+            });
+
+            $("#expandAll").click(function(e) {
+                e.preventDefault();
+                $("#mysidebar").navgoco('toggle', true);
+            });
+
+            // activate menu items where href is matching to current page
+            $("#mysidebar a[href='" + location.pathname.match(/\/([^\/]*)$/)[1] + "']")
+                .parents('li').addClass('active')
+                .parents('ul').css('display', 'block');
+        });
+
+    </script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#tg-sb-link").click(function() {
+                $("#tg-sb-sidebar").toggle();
+                $("#tg-sb-content").toggleClass('col-md-9');
+                $("#tg-sb-content").toggleClass('col-md-12');
+                $("#tg-sb-icon").toggleClass('fa-toggle-on');
+                $("#tg-sb-icon").toggleClass('fa-toggle-off');
+            });
+        });
+    </script>
+    
+
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container topnavlinks">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="fa fa-home fa-lg navbar-brand" href="index.html">&nbsp;<span class="projectTitle"> fastai</span></a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <!-- toggle sidebar button -->
+                <li><a id="tg-sb-link" href="#"><i id="tg-sb-icon" class="fa fa-toggle-on"></i> Nav</a></li>
+                <!-- entries without drop-downs appear here -->
+
+
+
+
+                
+                
+                
+                <li><a href="https://github.com/fastai/fastai" target="_blank">GitHub</a></li>
+                
+                
+                
+                <li><a href="http://www.fast.ai" target="_blank">News</a></li>
+                
+                
+                
+                <!-- entries with drop-downs appear here -->
+                <!-- conditional logic to control which topnav appears for the audience defined in the configuration file.-->
+                
+                
+                
+                
+                <li>
+                    <script>
+  (function() {
+    var cx = '000837339549978028235:mygjrpycyx2';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+
+<div id="gcs-search-container">
+    <gcse:search></gcse:search>
+</div>
+
+
+                </li>
+                
+            </ul>
+        </div>
+        </div>
+        <!-- /.container -->
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+  <div id="main">
+    <!-- Content Row -->
+    <div class="row">
+        
+        
+            <!-- Sidebar Column -->
+            <div class="col-md-3" id="tg-sb-sidebar">
+                
+
+
+<ul id="mysidebar" class="nav">
+  <li class="sidebarTitle"> </li>
+  
+  
+  
+  <li>
+      <a href="#">Getting started</a>
+      <ul>
+          
+          
+          
+          <li><a href="/">Overview</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Tutorials</a>
+      <ul>
+          
+          
+          
+          <li><a href="/tutorial">Overview</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Beginners</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/tutorial.vision">Vision tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.text">Text tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.tabular">Tabular tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.collab">Collab tutorial</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Intermediate</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/tutorial.datablock">Data block tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.imagenette">Imagenette tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.pets">Pets tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.transformers">Transformers tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.wikitext">Wikitext tutorial</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Advanced</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/tutorial.siamese">Siamese tutorial</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Training</a>
+      <ul>
+          
+          
+          
+          <li><a href="/learner">Training loop</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/optimizer">Optimizer</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/metrics">Metrics</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/interpret">Interpretation</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/distributed">Distributed</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Callbacks</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/callback.core">Core</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.schedule">Schedulers</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.hook">Hooks and callbacks</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.fp16">Mixed precision</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.mixup">Mixup</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.cutmix">Cutmix</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.tracker">Tracker</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.training">Training</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.rnn">RNN</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.data">Data</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.progress">Progress</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Data</a>
+      <ul>
+          
+          
+          
+          <li><a href="/data.block">Data Blocks</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.transforms">Data Transforms</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.external">Data External</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.core">Data Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li class="active"><a href="/data.load">DataLoader</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Core</a>
+      <ul>
+          
+          
+          
+          <li><a href="/torch_core">PyTorch Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/layers">Layers</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Vision</a>
+      <ul>
+          
+          
+          
+          <li><a href="/vision.learner">Vision Learner</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.augment">Vision Data Augmentation</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.data">Vision Data</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.core">Vision Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.utils">Vision Utils</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.widgets">Vision Widgets</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Models</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/vision.models.xresnet">XResnet</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/vision.models.unet">Unet</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Text</a>
+      <ul>
+          
+          
+          
+          <li><a href="/text.core">Text Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/text.data">Text Data</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/text.learner">Text Learner</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Models</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/text.models.core">Core</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/text.models.awdlstm">AWD LSTM</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/text.models.qrnn">QRNN</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Tabular</a>
+      <ul>
+          
+          
+          
+          <li><a href="/tabular.core">Tabular Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/tabular.data">Tabular Data</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/tabular.learner">Tabular Learner</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/tabular.model">Tabular Model</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/collab">Collab</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Medical</a>
+      <ul>
+          
+          
+          
+          <li><a href="/medical.imaging">Medical imagery</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/medical.text">Medical text</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+      
+      <!-- if you aren't using the accordion, uncomment this block:
+         <p class="external">
+             <a href="#" id="collapseAll">Collapse All</a> | <a href="#" id="expandAll">Expand All</a>
+         </p>
+         -->
+</ul>
+
+<!-- this highlights the active parent class in the navgoco sidebar. this is critical so that the parent expands when you're viewing a page. This must appear below the sidebar code above. Otherwise, if placed inside customscripts.js, the script runs before the sidebar code runs and the class never gets inserted.-->
+<script>$("li.active").parents('li').toggleClass("active");</script>
+
+            </div>
+            
+        
+
+        <!-- Content Column -->
+        <div class="col-md-9" id="tg-sb-content">
+            <div class="post-header">
+    <a id="Title"></a>
+    <h1 class="post-title-main">Title</h1>
+</div>
+
+
+
+<div class="post-content">
+
+   
+
+    
+    
+<!-- this handles the automatic toc. use ## for subheads to auto-generate the on-page minitoc. if you use html tags, you must supply an ID for the heading element in order for it to appear in the minitoc. -->
+<script>
+$( document ).ready(function() {
+  // Handler for .ready() called.
+
+$('#toc').toc({ minimumHeaders: 0, listType: 'ul', showSpeed: 0, headers: 'h2,h3,h4' });
+
+/* this offset helps account for the space taken up by the floating toolbar. */
+$('#toc').on('click', 'a', function() {
+  var target = $(this.getAttribute('href'))
+    , scroll_target = target.offset().top
+
+  $(window).scrollTop(scroll_target - 10);
+  return false
+})
+  
+});
+</script>
+
+<div id="toc"></div>
+
+    
+
+
+    
+
+   <!--
+
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: nbs/02_data.load.ipynb
+# command to build the docs after a change: nbdev_build_docs
+
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">nbdev.showdoc</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bs</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">letters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="DataLoader">DataLoader<a class="anchor-link" href="#DataLoader"> </a></h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="fa_collate" class="doc_header"><code>fa_collate</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/data/load.py#L43" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fa_collate</code>(<strong><code>t</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)),(</span><span class="mi">1</span><span class="p">,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))]</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">fa_collate</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">default_collate</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">fa_collate</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">type</span><span class="p">),</span> <span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="nb">tuple</span><span class="p">])</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,(</span><span class="mi">2</span><span class="p">,(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))),(</span><span class="mi">1</span><span class="p">,(</span><span class="mi">2</span><span class="p">,(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)))]</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">fa_collate</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">default_collate</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">fa_collate</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">type</span><span class="p">),</span> <span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="nb">tuple</span><span class="p">])</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">fa_collate</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">type</span><span class="p">),</span> <span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="nb">tuple</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="fa_convert" class="doc_header"><code>fa_convert</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/data/load.py#L50" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fa_convert</code>(<strong><code>t</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t0</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="n">t0</span><span class="p">,(</span><span class="n">t0</span><span class="p">,</span><span class="n">t0</span><span class="p">)]</span>
+
+<span class="n">test_eq</span><span class="p">(</span><span class="n">fa_convert</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">default_convert</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">fa_convert</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">type</span><span class="p">),</span> <span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="nb">tuple</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="SkipItemException" class="doc_header"><code>class</code> <code>SkipItemException</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/data/load.py#L56" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>SkipItemException</code>() :: <code>Exception</code></p>
+</blockquote>
+<p>Common base class for all non-exit exceptions.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="DataLoader" class="doc_header"><code>class</code> <code>DataLoader</code><a href="torch/utils/data/dataloader.py#L60" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>DataLoader</code>(<strong><code>dataset</code></strong>, <strong><code>batch_size</code></strong>=<em><code>1</code></em>, <strong><code>shuffle</code></strong>=<em><code>False</code></em>, <strong><code>sampler</code></strong>=<em><code>None</code></em>, <strong><code>batch_sampler</code></strong>=<em><code>None</code></em>, <strong><code>num_workers</code></strong>=<em><code>0</code></em>, <strong><code>collate_fn</code></strong>=<em><code>None</code></em>, <strong><code>pin_memory</code></strong>=<em><code>False</code></em>, <strong><code>drop_last</code></strong>=<em><code>False</code></em>, <strong><code>timeout</code></strong>=<em><code>0</code></em>, <strong><code>worker_init_fn</code></strong>=<em><code>None</code></em>, <strong><code>multiprocessing_context</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Data loader. Combines a dataset and a sampler, and provides an iterable over
+the given dataset.</p>
+<p>The :class:<code>~torch.utils.data.DataLoader</code> supports both map-style and
+iterable-style datasets with single- or multi-process loading, customizing
+loading order and optional automatic batching (collation) and memory pinning.</p>
+<p>See :py:mod:<code>torch.utils.data</code> documentation page for more details.</p>
+<p>Arguments:
+    dataset (Dataset): dataset from which to load the data.
+    batch_size (int, optional): how many samples per batch to load
+        (default: <code>1</code>).
+    shuffle (bool, optional): set to <code>True</code> to have the data reshuffled
+        at every epoch (default: <code>False</code>).
+    sampler (Sampler, optional): defines the strategy to draw samples from
+        the dataset. If specified, :attr:<code>shuffle</code> must be <code>False</code>.
+    batch_sampler (Sampler, optional): like :attr:<code>sampler</code>, but returns a batch of
+        indices at a time. Mutually exclusive with :attr:<code>batch_size</code>,
+        :attr:<code>shuffle</code>, :attr:<code>sampler</code>, and :attr:<code>drop_last</code>.
+    num_workers (int, optional): how many subprocesses to use for data
+        loading. <code>0</code> means that the data will be loaded in the main process.
+        (default: <code>0</code>)
+    collate_fn (callable, optional): merges a list of samples to form a
+        mini-batch of Tensor(s).  Used when using batched loading from a
+        map-style dataset.
+    pin_memory (bool, optional): If <code>True</code>, the data loader will copy Tensors
+        into CUDA pinned memory before returning them.  If your data elements
+        are a custom type, or your :attr:<code>collate_fn</code> returns a batch that is a custom type,
+        see the example below.
+    drop_last (bool, optional): set to <code>True</code> to drop the last incomplete batch,
+        if the dataset size is not divisible by the batch size. If <code>False</code> and
+        the size of dataset is not divisible by the batch size, then the last batch
+        will be smaller. (default: <code>False</code>)
+    timeout (numeric, optional): if positive, the timeout value for collecting a batch
+        from workers. Should always be non-negative. (default: <code>0</code>)
+    worker_init_fn (callable, optional): If not <code>None</code>, this will be called on each
+        worker subprocess with the worker id (an int in <code>[0, num_workers - 1]</code>) as
+        input, after seeding and before data loading. (default: <code>None</code>)</p>
+<p>.. warning:: If the <code>spawn</code> start method is used, :attr:<code>worker_init_fn</code>
+             cannot be an unpicklable object, e.g., a lambda function. See
+             :ref:<code>multiprocessing-best-practices</code> on more details related
+             to multiprocessing in PyTorch.</p>
+<p>.. note:: <code>len(dataloader)</code> heuristic is based on the length of the sampler used.
+          When :attr:<code>dataset</code> is an :class:<code>~torch.utils.data.IterableDataset</code>,
+          <code>len(dataset)</code> (if implemented) is returned instead, regardless
+          of multi-process loading configurations, because PyTorch trust
+          user :attr:<code>dataset</code> code in correctly handling multi-process
+          loading to avoid duplicate data. See <code>Dataset Types</code><em> for more
+          details on these two types of datasets and how
+          :class:<code>~torch.utils.data.IterableDataset</code> interacts with <code>Multi-process data loading</code></em>.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Override <code>item</code> and use the default infinite sampler to get a stream of unknown length (<code>stop()</code> when you want to stop the stream).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">RandDL</span><span class="p">(</span><span class="n">DataLoader</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">r</span> <span class="k">if</span> <span class="n">r</span><span class="o">&lt;</span><span class="mf">0.95</span> <span class="k">else</span> <span class="n">stop</span><span class="p">()</span>
+
+<span class="n">L</span><span class="p">(</span><span class="n">RandDL</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(#5) [0.014771725872121833,0.442737969598887,0.5174043161959161,0.4786935243450199,0.7019916436842374]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">L</span><span class="p">(</span><span class="n">RandDL</span><span class="p">(</span><span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(#4) [4,4,4,4]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dl</span> <span class="o">=</span> <span class="n">RandDL</span><span class="p">(</span><span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">L</span><span class="p">(</span><span class="n">dl</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(#24) [4,4,4,4,4,4,4,4,4,4...]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_eq</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">fake_l</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">dl</span><span class="o">.</span><span class="n">fake_l</span><span class="o">.</span><span class="n">no_multiproc</span><span class="p">():</span> 
+    <span class="n">test_eq</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">fake_l</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">L</span><span class="p">(</span><span class="n">dl</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">fake_l</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">_rand_item</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">r</span> <span class="k">if</span> <span class="n">r</span><span class="o">&lt;</span><span class="mf">0.95</span> <span class="k">else</span> <span class="n">stop</span><span class="p">()</span>
+
+<span class="n">L</span><span class="p">(</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">create_item</span><span class="o">=</span><span class="n">_rand_item</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(#8) [0.7443544446552649,0.6935816667551128,0.7728446664672133,0.38622694634190813,0.11620136834408035,0.0526608057414214,0.026778050174270596,0.9358154353466361]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you don't set <code>bs</code>, then <code>dataset</code> is assumed to provide an iterator or a <code>__getitem__</code> that returns a batch.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ds1</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">letters</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">ds1</span><span class="p">),</span> <span class="n">letters</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ds1</span><span class="p">),</span> <span class="mi">26</span><span class="p">)</span>
+
+<span class="n">test_shuffled</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span> <span class="n">letters</span><span class="p">)</span>
+
+<span class="n">ds1</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">indexed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">ds1</span><span class="p">),</span> <span class="n">letters</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ds1</span><span class="p">),</span> <span class="mi">26</span><span class="p">)</span>
+
+<span class="n">t2</span> <span class="o">=</span> <span class="n">L</span><span class="p">(</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]),</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]))</span>
+<span class="n">ds2</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+<span class="n">test_eq_type</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">ds2</span><span class="p">),</span> <span class="n">t2</span><span class="p">)</span>
+
+<span class="n">t3</span> <span class="o">=</span> <span class="n">L</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]),</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]))</span>
+<span class="n">ds3</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">t3</span><span class="p">)</span>
+<span class="n">test_eq_type</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">ds3</span><span class="p">),</span> <span class="n">t3</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">tensor</span><span class="p">))</span>
+
+<span class="n">ds4</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">t3</span><span class="p">,</span> <span class="n">create_batch</span><span class="o">=</span><span class="n">noop</span><span class="p">,</span> <span class="n">after_iter</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="n">t3</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">test_eq_type</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">ds4</span><span class="p">),</span> <span class="n">t3</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">t3</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you do set <code>bs</code>, then <code>dataset</code> is assumed to provide an iterator or a <code>__getitem__</code> that returns a single item of a batch.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">twoepochs</span><span class="p">(</span><span class="n">d</span><span class="p">):</span> <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">o</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">d</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ds1</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">twoepochs</span><span class="p">(</span><span class="n">ds1</span><span class="p">),</span> <span class="s1">&#39;abcd efgh ijkl mnop qrst uvwx abcd efgh ijkl mnop qrst uvwx&#39;</span><span class="p">)</span>
+
+<span class="n">ds1</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">twoepochs</span><span class="p">(</span><span class="n">ds1</span><span class="p">),</span> <span class="s1">&#39;abcd efgh ijkl mnop qrst uvwx yz abcd efgh ijkl mnop qrst uvwx yz&#39;</span><span class="p">)</span>
+
+<span class="n">ds1</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span> <span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">test_eq_type</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">ds1</span><span class="p">),</span> <span class="n">L</span><span class="p">(</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]),</span><span class="n">tensor</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]),</span><span class="n">tensor</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">])))</span>
+
+<span class="n">ds1</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)],</span> <span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">after_iter</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="n">t3</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">test_eq_type</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">ds1</span><span class="p">),</span> <span class="n">L</span><span class="p">([</span><span class="s1">&#39;0&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">],[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="s1">&#39;5&#39;</span><span class="p">,</span><span class="s1">&#39;6&#39;</span><span class="p">,</span><span class="s1">&#39;7&#39;</span><span class="p">],[</span><span class="s1">&#39;8&#39;</span><span class="p">,</span><span class="s1">&#39;9&#39;</span><span class="p">,</span><span class="s1">&#39;10&#39;</span><span class="p">]))</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">t3</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">DataLoader</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">noop</span><span class="p">,</span><span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)),</span> <span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">test_eq_type</span><span class="p">([</span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)],</span> <span class="p">[</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]),</span><span class="n">tensor</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]),</span><span class="n">tensor</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">])])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">SleepyDL</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">/</span><span class="mi">50</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">SleepyDL</span><span class="p">(</span><span class="n">letters</span><span class="p">)</span>
+
+<span class="o">%</span><span class="k">time</span> test_eq(DataLoader(t, num_workers=0), letters)
+<span class="o">%</span><span class="k">time</span> test_eq(DataLoader(t, num_workers=2), letters)
+<span class="o">%</span><span class="k">time</span> test_eq(DataLoader(t, num_workers=4), letters)
+
+<span class="n">dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">test_shuffled</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">dl</span><span class="p">),</span> <span class="n">letters</span><span class="p">)</span>
+<span class="n">test_shuffled</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">dl</span><span class="p">),</span> <span class="n">L</span><span class="p">(</span><span class="n">dl</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CPU times: user 5.22 ms, sys: 221 µs, total: 5.44 ms
+Wall time: 279 ms
+CPU times: user 18.3 ms, sys: 17.6 ms, total: 35.9 ms
+Wall time: 177 ms
+CPU times: user 19.8 ms, sys: 29.2 ms, total: 49.1 ms
+Wall time: 132 ms
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">SleepyQueue</span><span class="p">():</span>
+    <span class="s2">&quot;Simulate a queue with varying latency&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="o">=</span><span class="n">q</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span> <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">queues</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span> <span class="k">return</span>
+
+<span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span> <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+<span class="n">it</span> <span class="o">=</span> <span class="n">SleepyQueue</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+<span class="o">%</span><span class="k">time</span> test_shuffled(L(DataLoader(it, num_workers=4)), range(30))
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CPU times: user 26.7 ms, sys: 21 ms, total: 47.7 ms
+Wall time: 105 ms
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">TensorBase</span><span class="p">):</span> <span class="k">pass</span>
+
+<span class="k">for</span> <span class="n">nw</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="n">dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">([</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">],</span> <span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">nw</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">dl</span><span class="p">)</span>
+    <span class="n">test_eq</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="n">A</span><span class="p">)</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span><span class="p">(</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])),)</span>
+    <span class="n">dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">([</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">],</span> <span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">nw</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">dl</span><span class="p">)</span>
+    <span class="n">test_eq</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">A</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">TensorBase</span><span class="p">):</span> <span class="k">pass</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="n">tensor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="n">tdl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">([</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span><span class="p">],</span> <span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">after_batch</span><span class="o">=</span><span class="n">to_device</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">tdl</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="n">A</span><span class="p">)</span>
+
+<span class="c1"># Unknown attributes are delegated to `dataset`</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">tdl</span><span class="o">.</span><span class="n">pop</span><span class="p">(),</span> <span class="n">tensor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+</div>
+ 
+
+
+
+    <div class="tags">
+        
+    </div>
+
+</div>
+
+<hr class="shaded"/>
+
+<footer>
+            <div class="row">
+                <div class="col-lg-12 footer">
+                  <p><img src="/images/company_logo.png" alt="Company logo"/></p>
+               &copy;2020 fast.ai. All rights reserved. <br />
+ Site last generated: Jul 27, 2020 <br />
+                </div>
+            </div>
+</footer>
+
+
+        </div>
+    <!-- /.row -->
+</div>
+<!-- /.container -->
+</div>
+<!-- /#main -->
+    </div>
+
+</body>
+
+<!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-89522379-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+</html>

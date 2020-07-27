@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="All the functions necessary to build `Learner` suitable for transfer learning in computer vision">
+<meta name="keywords" content=" fastai">
+<title>Learner for the vision applications | fastai</title>
+<link rel="stylesheet" href="/css/syntax.css">
+
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">-->
+<link rel="stylesheet" href="/css/modern-business.css">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/customstyles.css">
+<link rel="stylesheet" href="/css/boxshadowproperties.css">
+<!-- most color styles are extracted out to here -->
+<link rel="stylesheet" href="/css/theme-blue.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="/js/jquery.navgoco.min.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement( document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "[%", right: "%]", display: true},
+      {left: "$", right: "$", display: false}
+    ]}
+  );
+});
+</script>
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- Anchor.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/2.0.0/anchor.min.js"></script>
+<script src="/js/toc.js"></script>
+<script src="/js/customscripts.js"></script>
+
+<link rel="shortcut icon" href="/images/favicon.ico?">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<link rel="alternate" type="application/rss+xml" title="fastai2" href="http://localhost:4000/feed.xml">
+
+
+    <script>
+        $(document).ready(function() {
+            // Initialize navgoco with default options
+            $("#mysidebar").navgoco({
+                caretHtml: '',
+                accordion: true,
+                openClass: 'active', // open
+                save: false, // leave false or nav highlighting doesn't work right
+                cookie: {
+                    name: 'navgoco',
+                    expires: false,
+                    path: '/'
+                },
+                slide: {
+                    duration: 400,
+                    easing: 'swing'
+                }
+            });
+
+            $("#collapseAll").click(function(e) {
+                e.preventDefault();
+                $("#mysidebar").navgoco('toggle', false);
+            });
+
+            $("#expandAll").click(function(e) {
+                e.preventDefault();
+                $("#mysidebar").navgoco('toggle', true);
+            });
+
+            // activate menu items where href is matching to current page
+            $("#mysidebar a[href='" + location.pathname.match(/\/([^\/]*)$/)[1] + "']")
+                .parents('li').addClass('active')
+                .parents('ul').css('display', 'block');
+        });
+
+    </script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#tg-sb-link").click(function() {
+                $("#tg-sb-sidebar").toggle();
+                $("#tg-sb-content").toggleClass('col-md-9');
+                $("#tg-sb-content").toggleClass('col-md-12');
+                $("#tg-sb-icon").toggleClass('fa-toggle-on');
+                $("#tg-sb-icon").toggleClass('fa-toggle-off');
+            });
+        });
+    </script>
+    
+
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container topnavlinks">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="fa fa-home fa-lg navbar-brand" href="index.html">&nbsp;<span class="projectTitle"> fastai</span></a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <!-- toggle sidebar button -->
+                <li><a id="tg-sb-link" href="#"><i id="tg-sb-icon" class="fa fa-toggle-on"></i> Nav</a></li>
+                <!-- entries without drop-downs appear here -->
+
+
+
+
+                
+                
+                
+                <li><a href="https://github.com/fastai/fastai" target="_blank">GitHub</a></li>
+                
+                
+                
+                <li><a href="http://www.fast.ai" target="_blank">News</a></li>
+                
+                
+                
+                <!-- entries with drop-downs appear here -->
+                <!-- conditional logic to control which topnav appears for the audience defined in the configuration file.-->
+                
+                
+                
+                
+                <li>
+                    <script>
+  (function() {
+    var cx = '000837339549978028235:mygjrpycyx2';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+
+<div id="gcs-search-container">
+    <gcse:search></gcse:search>
+</div>
+
+
+                </li>
+                
+            </ul>
+        </div>
+        </div>
+        <!-- /.container -->
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+  <div id="main">
+    <!-- Content Row -->
+    <div class="row">
+        
+        
+            <!-- Sidebar Column -->
+            <div class="col-md-3" id="tg-sb-sidebar">
+                
+
+
+<ul id="mysidebar" class="nav">
+  <li class="sidebarTitle"> </li>
+  
+  
+  
+  <li>
+      <a href="#">Getting started</a>
+      <ul>
+          
+          
+          
+          <li><a href="/">Overview</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Tutorials</a>
+      <ul>
+          
+          
+          
+          <li><a href="/tutorial">Overview</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Beginners</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/tutorial.vision">Vision tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.text">Text tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.tabular">Tabular tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.collab">Collab tutorial</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Intermediate</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/tutorial.datablock">Data block tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.imagenette">Imagenette tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.pets">Pets tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.transformers">Transformers tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.wikitext">Wikitext tutorial</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Advanced</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/tutorial.siamese">Siamese tutorial</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Training</a>
+      <ul>
+          
+          
+          
+          <li><a href="/learner">Training loop</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/optimizer">Optimizer</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/metrics">Metrics</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/interpret">Interpretation</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/distributed">Distributed</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Callbacks</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/callback.core">Core</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.schedule">Schedulers</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.hook">Hooks and callbacks</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.fp16">Mixed precision</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.mixup">Mixup</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.cutmix">Cutmix</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.tracker">Tracker</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.training">Training</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.rnn">RNN</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.data">Data</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.progress">Progress</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Data</a>
+      <ul>
+          
+          
+          
+          <li><a href="/data.block">Data Blocks</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.transforms">Data Transforms</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.external">Data External</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.core">Data Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.load">DataLoader</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Core</a>
+      <ul>
+          
+          
+          
+          <li><a href="/torch_core">PyTorch Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/layers">Layers</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Vision</a>
+      <ul>
+          
+          
+          
+          <li class="active"><a href="/vision.learner">Vision Learner</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.augment">Vision Data Augmentation</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.data">Vision Data</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.core">Vision Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.utils">Vision Utils</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.widgets">Vision Widgets</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Models</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/vision.models.xresnet">XResnet</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/vision.models.unet">Unet</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Text</a>
+      <ul>
+          
+          
+          
+          <li><a href="/text.core">Text Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/text.data">Text Data</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/text.learner">Text Learner</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Models</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/text.models.core">Core</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/text.models.awdlstm">AWD LSTM</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/text.models.qrnn">QRNN</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Tabular</a>
+      <ul>
+          
+          
+          
+          <li><a href="/tabular.core">Tabular Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/tabular.data">Tabular Data</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/tabular.learner">Tabular Learner</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/tabular.model">Tabular Model</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/collab">Collab</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Medical</a>
+      <ul>
+          
+          
+          
+          <li><a href="/medical.imaging">Medical imagery</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/medical.text">Medical text</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+      
+      <!-- if you aren't using the accordion, uncomment this block:
+         <p class="external">
+             <a href="#" id="collapseAll">Collapse All</a> | <a href="#" id="expandAll">Expand All</a>
+         </p>
+         -->
+</ul>
+
+<!-- this highlights the active parent class in the navgoco sidebar. this is critical so that the parent expands when you're viewing a page. This must appear below the sidebar code above. Otherwise, if placed inside customscripts.js, the script runs before the sidebar code runs and the class never gets inserted.-->
+<script>$("li.active").parents('li').toggleClass("active");</script>
+
+            </div>
+            
+        
+
+        <!-- Content Column -->
+        <div class="col-md-9" id="tg-sb-content">
+            <div class="post-header">
+    <a id="Learner for the vision applications"></a>
+    <h1 class="post-title-main">Learner for the vision applications</h1>
+</div>
+
+
+
+<div class="post-content">
+
+   
+    <div class="summary">All the functions necessary to build `Learner` suitable for transfer learning in computer vision</div>
+   
+
+    
+    
+<!-- this handles the automatic toc. use ## for subheads to auto-generate the on-page minitoc. if you use html tags, you must supply an ID for the heading element in order for it to appear in the minitoc. -->
+<script>
+$( document ).ready(function() {
+  // Handler for .ready() called.
+
+$('#toc').toc({ minimumHeaders: 0, listType: 'ul', showSpeed: 0, headers: 'h2,h3,h4' });
+
+/* this offset helps account for the space taken up by the floating toolbar. */
+$('#toc').on('click', 'a', function() {
+  var target = $(this.getAttribute('href'))
+    , scroll_target = target.offset().top
+
+  $(window).scrollTop(scroll_target - 10);
+  return false
+})
+  
+});
+</script>
+
+<div id="toc"></div>
+
+    
+
+
+    
+
+   <!--
+
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: nbs/21_vision.learner.ipynb
+# command to build the docs after a change: nbdev_build_docs
+
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The most important functions of this module are <a href="/vision.learner#cnn_learner"><code>cnn_learner</code></a> and <a href="/vision.learner#unet_learner"><code>unet_learner</code></a>. They will help you define a <a href="/learner#Learner"><code>Learner</code></a> using a pretrained model. See the <a href="http://dev.fast.ai/tutorial.vision">vision tutorial</a> for examples of use.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Cut-a-pretrained-model">Cut a pretrained model<a class="anchor-link" href="#Cut-a-pretrained-model"> </a></h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>By default, the fastai library cuts a pretrained model at the pooling layer. This function helps detecting it.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="has_pool_type" class="doc_header"><code>has_pool_type</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/learner.py#L17" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>has_pool_type</code>(<strong><code>m</code></strong>)</p>
+</blockquote>
+<p>Return <code>True</code> if <code>m</code> is a pooling layer or has one in its children</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">AdaptiveAvgPool2d</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool3d</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="k">assert</span> <span class="n">has_pool_type</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">([</span><span class="n">has_pool_type</span><span class="p">(</span><span class="n">m_</span><span class="p">)</span> <span class="k">for</span> <span class="n">m_</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">children</span><span class="p">()],</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">True</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="create_body" class="doc_header"><code>create_body</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/learner.py#L63" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>create_body</code>(<strong><code>arch</code></strong>, <strong><code>n_in</code></strong>=<em><code>3</code></em>, <strong><code>pretrained</code></strong>=<em><code>True</code></em>, <strong><code>cut</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Cut off the body of a typically pretrained <code>arch</code> as determined by <code>cut</code></p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>cut</code> can either be an integer, in which case we cut the model at the coresponding layer, or a function, in which case, this function returns <code>cut(model)</code>. It defaults to the first layer that contains some pooling otherwise.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tst</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">pretrained</span> <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">AvgPool2d</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">create_body</span><span class="p">(</span><span class="n">tst</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">create_body</span><span class="p">(</span><span class="n">tst</span><span class="p">,</span> <span class="n">cut</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">create_body</span><span class="p">(</span><span class="n">tst</span><span class="p">,</span> <span class="n">cut</span><span class="o">=</span><span class="n">noop</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>    
+    <span class="n">m</span> <span class="o">=</span> <span class="n">create_body</span><span class="p">(</span><span class="n">tst</span><span class="p">,</span> <span class="n">n_in</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">test_eq</span><span class="p">(</span><span class="n">_get_first_layer</span><span class="p">(</span><span class="n">m</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Head-and-model">Head and model<a class="anchor-link" href="#Head-and-model"> </a></h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="create_head" class="doc_header"><code>create_head</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/learner.py#L76" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>create_head</code>(<strong><code>nf</code></strong>, <strong><code>n_out</code></strong>, <strong><code>lin_ftrs</code></strong>=<em><code>None</code></em>, <strong><code>ps</code></strong>=<em><code>0.5</code></em>, <strong><code>concat_pool</code></strong>=<em><code>True</code></em>, <strong><code>bn_final</code></strong>=<em><code>False</code></em>, <strong><code>lin_first</code></strong>=<em><code>False</code></em>, <strong><code>y_range</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Model head that takes <code>nf</code> features, runs through <code>lin_ftrs</code>, and out <code>n_out</code> classes.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The head begins with fastai's <a href="/layers#AdaptiveConcatPool2d"><code>AdaptiveConcatPool2d</code></a> if <code>concat_pool=True</code> otherwise, it uses traditional average pooling. Then it uses a <a href="/layers#Flatten"><code>Flatten</code></a> layer before going on blocks of <a href="/layers#BatchNorm"><code>BatchNorm</code></a>, <code>Dropout</code> and <code>Linear</code> layers (if <code>lin_first=True</code>, those are <code>Linear</code>, <a href="/layers#BatchNorm"><code>BatchNorm</code></a>, <code>Dropout</code>).</p>
+<p>Those blocks start at <code>nf</code>, then every element of <code>lin_ftrs</code> (defaults to <code>[512]</code>) and end at <code>n_out</code>. <code>ps</code> is a list of probabiliies used for the dropouts (if you only pass 1, it will use half the value then that value as many times as necessary).</p>
+<p>If <code>bn_final=True</code>, a final <a href="/layers#BatchNorm"><code>BatchNorm</code></a> layer is added. If <code>y_range</code> is passed, the function adds a <a href="/layers#SigmoidRange"><code>SigmoidRange</code></a> to that range.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tst</span> <span class="o">=</span> <span class="n">create_head</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">tst</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Sequential(
+  (0): AdaptiveConcatPool2d(
+    (ap): AdaptiveAvgPool2d(output_size=1)
+    (mp): AdaptiveMaxPool2d(output_size=1)
+  )
+  (1): Flatten(full=False)
+  (2): BatchNorm1d(5, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (3): Dropout(p=0.25, inplace=False)
+  (4): Linear(in_features=5, out_features=512, bias=False)
+  (5): ReLU(inplace=True)
+  (6): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (7): Dropout(p=0.5, inplace=False)
+  (8): Linear(in_features=512, out_features=10, bias=False)
+)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="create_cnn_model" class="doc_header"><code>create_cnn_model</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/learner.py#L96" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>create_cnn_model</code>(<strong><code>arch</code></strong>, <strong><code>n_out</code></strong>, <strong><code>cut</code></strong>=<em><code>None</code></em>, <strong><code>pretrained</code></strong>=<em><code>True</code></em>, <strong><code>n_in</code></strong>=<em><code>3</code></em>, <strong><code>init</code></strong>=<em><code>'kaiming_normal_'</code></em>, <strong><code>custom_head</code></strong>=<em><code>None</code></em>, <strong><code>concat_pool</code></strong>=<em><code>True</code></em>, <strong><code>lin_ftrs</code></strong>=<em><code>None</code></em>, <strong><code>ps</code></strong>=<em><code>0.5</code></em>, <strong><code>bn_final</code></strong>=<em><code>False</code></em>, <strong><code>lin_first</code></strong>=<em><code>False</code></em>, <strong><code>y_range</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Create custom convnet architecture using <code>arch</code>, <code>n_in</code> and <code>n_out</code></p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The model is cut according to <code>cut</code> and it may be <code>pretrained</code>, in which case, the proper set of weights is downloaded then loaded. <code>init</code> is applied to the head of the model, which is either created by <a href="/vision.learner#create_head"><code>create_head</code></a> (with <code>lin_ftrs</code>, <code>ps</code>, <code>concat_pool</code>, <code>bn_final</code>, <code>lin_first</code> and <code>y_range</code>) or is <code>custom_head</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tst</span> <span class="o">=</span> <span class="n">create_cnn_model</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">resnet18</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">tst</span> <span class="o">=</span> <span class="n">create_cnn_model</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">resnet18</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">n_in</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="cnn_config" class="doc_header"><code>cnn_config</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/learner.py#L110" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cnn_config</code>(<strong><code>cut</code></strong>=<em><code>None</code></em>, <strong><code>pretrained</code></strong>=<em><code>True</code></em>, <strong><code>n_in</code></strong>=<em><code>3</code></em>, <strong><code>init</code></strong>=<em><code>'kaiming_normal_'</code></em>, <strong><code>custom_head</code></strong>=<em><code>None</code></em>, <strong><code>concat_pool</code></strong>=<em><code>True</code></em>, <strong><code>lin_ftrs</code></strong>=<em><code>None</code></em>, <strong><code>ps</code></strong>=<em><code>0.5</code></em>, <strong><code>bn_final</code></strong>=<em><code>False</code></em>, <strong><code>lin_first</code></strong>=<em><code>False</code></em>, <strong><code>y_range</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Convenience function to easily create a config for <a href="/vision.learner#create_cnn_model"><code>create_cnn_model</code></a></p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pets</span> <span class="o">=</span> <span class="n">DataBlock</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="n">ImageBlock</span><span class="p">,</span> <span class="n">CategoryBlock</span><span class="p">),</span> 
+                 <span class="n">get_items</span><span class="o">=</span><span class="n">get_image_files</span><span class="p">,</span> 
+                 <span class="n">splitter</span><span class="o">=</span><span class="n">RandomSplitter</span><span class="p">(),</span>
+                 <span class="n">get_y</span><span class="o">=</span><span class="n">RegexLabeller</span><span class="p">(</span><span class="n">pat</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/([^/]+)_\d+.jpg$&#39;</span><span class="p">))</span>
+
+<span class="n">dls</span> <span class="o">=</span> <span class="n">pets</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">untar_data</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">PETS</span><span class="p">)</span><span class="o">/</span><span class="s2">&quot;images&quot;</span><span class="p">,</span> <span class="n">item_tfms</span><span class="o">=</span><span class="n">RandomResizedCrop</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="n">min_scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">bs</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+                        <span class="n">batch_tfms</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">aug_transforms</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">224</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>@log_args had an issue on DataLoader.__init__ -&gt; got an unexpected keyword argument &#39;item_tfms&#39;
+@log_args had an issue on TfmdDL.__init__ -&gt; got an unexpected keyword argument &#39;item_tfms&#39;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># class ModelSplitter():</span>
+<span class="c1">#     def __init__(self, idx): self.idx = idx</span>
+<span class="c1">#     def split(self, m): return L(m[:self.idx], m[self.idx:]).map(params)</span>
+<span class="c1">#     def __call__(self,): return {&#39;cut&#39;:self.idx, &#39;split&#39;:self.split}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="default_split" class="doc_header"><code>default_split</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/learner.py#L116" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>default_split</code>(<strong><code>m</code></strong>)</p>
+</blockquote>
+<p>Default split of a model between body and head</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To do transfer learning, you need to pass a <code>splitter</code> to <a href="/learner#Learner"><code>Learner</code></a>. This should be a function taking the model and returning a collection of parameter groups, e.g. a list of list of parameters.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Learner-convenience-functions"><a href="/learner#Learner"><code>Learner</code></a> convenience functions<a class="anchor-link" href="#Learner-convenience-functions"> </a></h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="cnn_learner" class="doc_header"><code>cnn_learner</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/learner.py#L164" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cnn_learner</code>(<strong><code>dls</code></strong>, <strong><code>arch</code></strong>, <strong><code>loss_func</code></strong>=<em><code>None</code></em>, <strong><code>pretrained</code></strong>=<em><code>True</code></em>, <strong><code>cut</code></strong>=<em><code>None</code></em>, <strong><code>splitter</code></strong>=<em><code>None</code></em>, <strong><code>y_range</code></strong>=<em><code>None</code></em>, <strong><code>config</code></strong>=<em><code>None</code></em>, <strong><code>n_out</code></strong>=<em><code>None</code></em>, <strong><code>normalize</code></strong>=<em><code>True</code></em>, <strong><code>opt_func</code></strong>=<em><code>'Adam'</code></em>, <strong><code>lr</code></strong>=<em><code>0.001</code></em>, <strong><code>cbs</code></strong>=<em><code>None</code></em>, <strong><code>metrics</code></strong>=<em><code>None</code></em>, <strong><code>path</code></strong>=<em><code>None</code></em>, <strong><code>model_dir</code></strong>=<em><code>'models'</code></em>, <strong><code>wd</code></strong>=<em><code>None</code></em>, <strong><code>wd_bn_bias</code></strong>=<em><code>False</code></em>, <strong><code>train_bn</code></strong>=<em><code>True</code></em>, <strong><code>moms</code></strong>=<em><code>(0.95, 0.85, 0.95)</code></em>)</p>
+</blockquote>
+<p>Build a convnet style learner from <code>dls</code> and <code>arch</code></p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The model is built from <code>arch</code> using the number of final activations inferred from <code>dls</code> if possible (otherwise pass a value to <code>n_out</code>). It might be <code>pretrained</code> and the architecture is cut and split using the default metadata of the model architecture (this can be customized by passing a <code>cut</code> or a <code>splitter</code>).</p>
+<p>To customize the model creation, use <a href="/vision.learner#cnn_config"><code>cnn_config</code></a> and pass the result to the <code>config</code> argument. There is just easy access to <code>y_range</code> because this argument is often used.</p>
+<p>If <code>normalize</code> and <code>pretrained</code> are <code>True</code>, this function adds a <code>Normalization</code> transform to the <code>dls</code> (if there is not already one) using the statistics of the pretrained model. That way, you won't ever forget to normalize your data in transfer learning.</p>
+<p>All other arguments are passed to <a href="/learner#Learner"><code>Learner</code></a>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">untar_data</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">PETS</span><span class="p">)</span>
+<span class="n">fnames</span> <span class="o">=</span> <span class="n">get_image_files</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="s2">&quot;images&quot;</span><span class="p">)</span>
+<span class="n">pat</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^(.*)_\d+.jpg$&#39;</span>
+<span class="n">dls</span> <span class="o">=</span> <span class="n">ImageDataLoaders</span><span class="o">.</span><span class="n">from_name_re</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">fnames</span><span class="p">,</span> <span class="n">pat</span><span class="p">,</span> <span class="n">item_tfms</span><span class="o">=</span><span class="n">Resize</span><span class="p">(</span><span class="mi">224</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">cnn_learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet34</span><span class="p">,</span> <span class="n">loss_func</span><span class="o">=</span><span class="n">CrossEntropyLossFlat</span><span class="p">(),</span> <span class="n">config</span><span class="o">=</span><span class="n">cnn_config</span><span class="p">(</span><span class="n">ps</span><span class="o">=</span><span class="mf">0.25</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="unet_config" class="doc_header"><code>unet_config</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/learner.py#L181" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>unet_config</code>(<strong><code>blur</code></strong>=<em><code>False</code></em>, <strong><code>blur_final</code></strong>=<em><code>True</code></em>, <strong><code>self_attention</code></strong>=<em><code>False</code></em>, <strong><code>y_range</code></strong>=<em><code>None</code></em>, <strong><code>last_cross</code></strong>=<em><code>True</code></em>, <strong><code>bottle</code></strong>=<em><code>False</code></em>, <strong><code>act_cls</code></strong>=<em><code>'ReLU'</code></em>, <strong><code>init</code></strong>=<em><code>'kaiming_normal_'</code></em>, <strong><code>norm_type</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Convenience function to easily create a config for <a href="/vision.models.unet#DynamicUnet"><code>DynamicUnet</code></a></p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="unet_learner" class="doc_header"><code>unet_learner</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/learner.py#L187" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>unet_learner</code>(<strong><code>dls</code></strong>, <strong><code>arch</code></strong>, <strong><code>loss_func</code></strong>=<em><code>None</code></em>, <strong><code>pretrained</code></strong>=<em><code>True</code></em>, <strong><code>cut</code></strong>=<em><code>None</code></em>, <strong><code>splitter</code></strong>=<em><code>None</code></em>, <strong><code>config</code></strong>=<em><code>None</code></em>, <strong><code>n_in</code></strong>=<em><code>3</code></em>, <strong><code>n_out</code></strong>=<em><code>None</code></em>, <strong><code>normalize</code></strong>=<em><code>True</code></em>, <strong><code>opt_func</code></strong>=<em><code>'Adam'</code></em>, <strong><code>lr</code></strong>=<em><code>0.001</code></em>, <strong><code>cbs</code></strong>=<em><code>None</code></em>, <strong><code>metrics</code></strong>=<em><code>None</code></em>, <strong><code>path</code></strong>=<em><code>None</code></em>, <strong><code>model_dir</code></strong>=<em><code>'models'</code></em>, <strong><code>wd</code></strong>=<em><code>None</code></em>, <strong><code>wd_bn_bias</code></strong>=<em><code>False</code></em>, <strong><code>train_bn</code></strong>=<em><code>True</code></em>, <strong><code>moms</code></strong>=<em><code>(0.95, 0.85, 0.95)</code></em>)</p>
+</blockquote>
+<p>Build a unet learner from <code>dls</code> and <code>arch</code></p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The model is built from <code>arch</code> using the number of final filters inferred from <code>dls</code> if possible (otherwise pass a value to <code>n_out</code>). It might be <code>pretrained</code> and the architecture is cut and split using the default metadata of the model architecture (this can be customized by passing a <code>cut</code> or a <code>splitter</code>).</p>
+<p>To customize the model creation, use <a href="/vision.learner#unet_config"><code>unet_config</code></a> and pass the result to the <code>config</code> argument.</p>
+<p>If <code>normalize</code> and <code>pretrained</code> are <code>True</code>, this function adds a <code>Normalization</code> transform to the <code>dls</code> (if there is not already one) using the statistics of the pretrained model. That way, you won't ever forget to normalize your data in transfer learning.</p>
+<p>All other arguments are passed to <a href="/learner#Learner"><code>Learner</code></a>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">untar_data</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">CAMVID_TINY</span><span class="p">)</span>
+<span class="n">fnames</span> <span class="o">=</span> <span class="n">get_image_files</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="s1">&#39;images&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">label_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">path</span><span class="o">/</span><span class="s1">&#39;labels&#39;</span><span class="o">/</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{x.stem}</span><span class="s1">_P</span><span class="si">{x.suffix}</span><span class="s1">&#39;</span>
+<span class="n">codes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="s1">&#39;codes.txt&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    
+<span class="n">dls</span> <span class="o">=</span> <span class="n">SegmentationDataLoaders</span><span class="o">.</span><span class="n">from_label_func</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">fnames</span><span class="p">,</span> <span class="n">label_func</span><span class="p">,</span> <span class="n">codes</span><span class="o">=</span><span class="n">codes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">unet_learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet34</span><span class="p">,</span> <span class="n">loss_func</span><span class="o">=</span><span class="n">CrossEntropyLossFlat</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+</div>
+ 
+
+
+
+    <div class="tags">
+        
+    </div>
+
+</div>
+
+<hr class="shaded"/>
+
+<footer>
+            <div class="row">
+                <div class="col-lg-12 footer">
+                  <p><img src="/images/company_logo.png" alt="Company logo"/></p>
+               &copy;2020 fast.ai. All rights reserved. <br />
+ Site last generated: Jul 27, 2020 <br />
+                </div>
+            </div>
+</footer>
+
+
+        </div>
+    <!-- /.row -->
+</div>
+<!-- /.container -->
+</div>
+<!-- /#main -->
+    </div>
+
+</body>
+
+<!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-89522379-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+</html>

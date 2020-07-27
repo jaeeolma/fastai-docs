@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+
+
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.captum.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.core.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.cutmix.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.data.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.fp16.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.hook.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.mixup.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.neptune.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.progress.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.rnn.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.schedule.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.tensorboard.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.tracker.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.training.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/callback.wandb.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/collab.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/data.block.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/data.core.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/data.external.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/data.load.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/data.transforms.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/distributed.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/examples.html</loc>
+  </url>
+  
+  
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/interpret.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/layers.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/learner.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/learning.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/medical.imaging.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/medical.text.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/metrics.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/migrating.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/optimizer.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/pytorch_doc.html</loc>
+  </url>
+  
+  
+  
+  
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/synth.learner.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tabular.core.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tabular.data.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tabular.learner.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tabular.model.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tabular.rapids.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/test.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/test_utils.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/text.core.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/text.data.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/text.learner.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/text.models.awdlstm.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/text.models.core.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/text.models.qrnn.html</loc>
+  </url>
+  
+  
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/torch_core.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.collab.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.datablock.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.imagenette.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.medical_imaging.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.pets.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.siamese.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.tabular.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.text.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.transformers.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.vision.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/tutorial.wikitext.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/utils.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/vision.augment.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/vision.core.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/vision.data.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/vision.gan.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/vision.learner.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/vision.models.unet.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/vision.models.xresnet.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/vision.utils.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/vision.widgets.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/xse.resnext.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/xse_resnext.html</loc>
+  </url>
+  
+  
+  
+  <url>
+    <loc>http://localhost:4000/assets/css/style.css</loc>
+  </url>
+  
+  
+</urlset>

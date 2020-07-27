@@ -1,0 +1,2326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Helpers for working with DICOM files">
+<meta name="keywords" content=" fastai">
+<title>Medical Imaging | fastai</title>
+<link rel="stylesheet" href="/css/syntax.css">
+
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">-->
+<link rel="stylesheet" href="/css/modern-business.css">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/customstyles.css">
+<link rel="stylesheet" href="/css/boxshadowproperties.css">
+<!-- most color styles are extracted out to here -->
+<link rel="stylesheet" href="/css/theme-blue.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="/js/jquery.navgoco.min.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement( document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "[%", right: "%]", display: true},
+      {left: "$", right: "$", display: false}
+    ]}
+  );
+});
+</script>
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- Anchor.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/2.0.0/anchor.min.js"></script>
+<script src="/js/toc.js"></script>
+<script src="/js/customscripts.js"></script>
+
+<link rel="shortcut icon" href="/images/favicon.ico?">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<link rel="alternate" type="application/rss+xml" title="fastai2" href="http://localhost:4000/feed.xml">
+
+
+    <script>
+        $(document).ready(function() {
+            // Initialize navgoco with default options
+            $("#mysidebar").navgoco({
+                caretHtml: '',
+                accordion: true,
+                openClass: 'active', // open
+                save: false, // leave false or nav highlighting doesn't work right
+                cookie: {
+                    name: 'navgoco',
+                    expires: false,
+                    path: '/'
+                },
+                slide: {
+                    duration: 400,
+                    easing: 'swing'
+                }
+            });
+
+            $("#collapseAll").click(function(e) {
+                e.preventDefault();
+                $("#mysidebar").navgoco('toggle', false);
+            });
+
+            $("#expandAll").click(function(e) {
+                e.preventDefault();
+                $("#mysidebar").navgoco('toggle', true);
+            });
+
+            // activate menu items where href is matching to current page
+            $("#mysidebar a[href='" + location.pathname.match(/\/([^\/]*)$/)[1] + "']")
+                .parents('li').addClass('active')
+                .parents('ul').css('display', 'block');
+        });
+
+    </script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#tg-sb-link").click(function() {
+                $("#tg-sb-sidebar").toggle();
+                $("#tg-sb-content").toggleClass('col-md-9');
+                $("#tg-sb-content").toggleClass('col-md-12');
+                $("#tg-sb-icon").toggleClass('fa-toggle-on');
+                $("#tg-sb-icon").toggleClass('fa-toggle-off');
+            });
+        });
+    </script>
+    
+
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container topnavlinks">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="fa fa-home fa-lg navbar-brand" href="index.html">&nbsp;<span class="projectTitle"> fastai</span></a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <!-- toggle sidebar button -->
+                <li><a id="tg-sb-link" href="#"><i id="tg-sb-icon" class="fa fa-toggle-on"></i> Nav</a></li>
+                <!-- entries without drop-downs appear here -->
+
+
+
+
+                
+                
+                
+                <li><a href="https://github.com/fastai/fastai" target="_blank">GitHub</a></li>
+                
+                
+                
+                <li><a href="http://www.fast.ai" target="_blank">News</a></li>
+                
+                
+                
+                <!-- entries with drop-downs appear here -->
+                <!-- conditional logic to control which topnav appears for the audience defined in the configuration file.-->
+                
+                
+                
+                
+                <li>
+                    <script>
+  (function() {
+    var cx = '000837339549978028235:mygjrpycyx2';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+
+<div id="gcs-search-container">
+    <gcse:search></gcse:search>
+</div>
+
+
+                </li>
+                
+            </ul>
+        </div>
+        </div>
+        <!-- /.container -->
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+  <div id="main">
+    <!-- Content Row -->
+    <div class="row">
+        
+        
+            <!-- Sidebar Column -->
+            <div class="col-md-3" id="tg-sb-sidebar">
+                
+
+
+<ul id="mysidebar" class="nav">
+  <li class="sidebarTitle"> </li>
+  
+  
+  
+  <li>
+      <a href="#">Getting started</a>
+      <ul>
+          
+          
+          
+          <li><a href="/">Overview</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Tutorials</a>
+      <ul>
+          
+          
+          
+          <li><a href="/tutorial">Overview</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Beginners</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/tutorial.vision">Vision tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.text">Text tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.tabular">Tabular tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.collab">Collab tutorial</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Intermediate</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/tutorial.datablock">Data block tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.imagenette">Imagenette tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.pets">Pets tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.transformers">Transformers tutorial</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/tutorial.wikitext">Wikitext tutorial</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Advanced</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/tutorial.siamese">Siamese tutorial</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Training</a>
+      <ul>
+          
+          
+          
+          <li><a href="/learner">Training loop</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/optimizer">Optimizer</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/metrics">Metrics</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/interpret">Interpretation</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/distributed">Distributed</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Callbacks</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/callback.core">Core</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.schedule">Schedulers</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.hook">Hooks and callbacks</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.fp16">Mixed precision</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.mixup">Mixup</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.cutmix">Cutmix</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.tracker">Tracker</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.training">Training</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.rnn">RNN</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.data">Data</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/callback.progress">Progress</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Data</a>
+      <ul>
+          
+          
+          
+          <li><a href="/data.block">Data Blocks</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.transforms">Data Transforms</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.external">Data External</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.core">Data Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/data.load">DataLoader</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Core</a>
+      <ul>
+          
+          
+          
+          <li><a href="/torch_core">PyTorch Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/layers">Layers</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Vision</a>
+      <ul>
+          
+          
+          
+          <li><a href="/vision.learner">Vision Learner</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.augment">Vision Data Augmentation</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.data">Vision Data</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.core">Vision Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.utils">Vision Utils</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/vision.widgets">Vision Widgets</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Models</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/vision.models.xresnet">XResnet</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/vision.models.unet">Unet</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Text</a>
+      <ul>
+          
+          
+          
+          <li><a href="/text.core">Text Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/text.data">Text Data</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/text.learner">Text Learner</a></li>
+          
+          
+          
+          <li class="subfolders">
+              <a href="#">Models</a>
+              <ul>
+                  
+                  
+                  
+                  <li><a href="/text.models.core">Core</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/text.models.awdlstm">AWD LSTM</a></li>
+                  
+                  
+                  
+                  
+                  
+                  <li><a href="/text.models.qrnn">QRNN</a></li>
+                  
+                  
+                  
+              </ul>
+          </li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Tabular</a>
+      <ul>
+          
+          
+          
+          <li><a href="/tabular.core">Tabular Core</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/tabular.data">Tabular Data</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/tabular.learner">Tabular Learner</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/tabular.model">Tabular Model</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/collab">Collab</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+  
+  <li>
+      <a href="#">Medical</a>
+      <ul>
+          
+          
+          
+          <li class="active"><a href="/medical.imaging">Medical imagery</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/medical.text">Medical text</a></li>
+          
+          
+          
+          
+      </ul>
+   </li>
+     
+      
+      
+      <!-- if you aren't using the accordion, uncomment this block:
+         <p class="external">
+             <a href="#" id="collapseAll">Collapse All</a> | <a href="#" id="expandAll">Expand All</a>
+         </p>
+         -->
+</ul>
+
+<!-- this highlights the active parent class in the navgoco sidebar. this is critical so that the parent expands when you're viewing a page. This must appear below the sidebar code above. Otherwise, if placed inside customscripts.js, the script runs before the sidebar code runs and the class never gets inserted.-->
+<script>$("li.active").parents('li').toggleClass("active");</script>
+
+            </div>
+            
+        
+
+        <!-- Content Column -->
+        <div class="col-md-9" id="tg-sb-content">
+            <div class="post-header">
+    <a id="Medical Imaging"></a>
+    <h1 class="post-title-main">Medical Imaging</h1>
+</div>
+
+
+
+<div class="post-content">
+
+   
+    <div class="summary">Helpers for working with DICOM files</div>
+   
+
+    
+    
+<!-- this handles the automatic toc. use ## for subheads to auto-generate the on-page minitoc. if you use html tags, you must supply an ID for the heading element in order for it to appear in the minitoc. -->
+<script>
+$( document ).ready(function() {
+  // Handler for .ready() called.
+
+$('#toc').toc({ minimumHeaders: 0, listType: 'ul', showSpeed: 0, headers: 'h2,h3,h4' });
+
+/* this offset helps account for the space taken up by the floating toolbar. */
+$('#toc').on('click', 'a', function() {
+  var target = $(this.getAttribute('href'))
+    , scroll_target = target.offset().top
+
+  $(window).scrollTop(scroll_target - 10);
+  return false
+})
+  
+});
+</script>
+
+<div id="toc"></div>
+
+    
+
+
+    
+
+   <!--
+
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: nbs/60_medical.imaging.ipynb
+# command to build the docs after a change: nbdev_build_docs
+
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">nbdev.showdoc</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;image.cmap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bone&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Patching">Patching<a class="anchor-link" href="#Patching"> </a></h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_dicom_files" class="doc_header"><code>get_dicom_files</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L24" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_dicom_files</code>(<strong><code>path</code></strong>, <strong><code>recurse</code></strong>=<em><code>True</code></em>, <strong><code>folders</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Get dicom files in <code>path</code> recursively, only in <code>folders</code>, if specified.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Path.dcmread" class="doc_header"><code>Path.dcmread</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L29" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Path.dcmread</code>(<strong><code>fn</code></strong>:<code>Path</code>, <strong><code>force</code></strong>=<em><code>False</code></em>)</p>
+</blockquote>
+<p>Open a <code>DICOM</code> file</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="TensorDicom" class="doc_header"><code>class</code> <code>TensorDicom</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L35" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TensorDicom</code>(<strong><code>x</code></strong>, <strong>**<code>kwargs</code></strong>) :: <a href="/torch_core#TensorImage"><code>TensorImage</code></a></p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="PILDicom" class="doc_header"><code>class</code> <code>PILDicom</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L38" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PILDicom</code>() :: <a href="/vision.core#PILBase"><code>PILBase</code></a></p>
+</blockquote>
+<p>This class represents an image object.  To create
+:py:class:<code>~PIL.Image.Image</code> objects, use the appropriate factory
+functions.  There's hardly ever any reason to call the Image constructor
+directly.</p>
+<ul>
+<li>:py:func:<code>~PIL.Image.open</code></li>
+<li>:py:func:<code>~PIL.Image.new</code></li>
+<li>:py:func:<code>~PIL.Image.frombytes</code></li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># @patch</span>
+<span class="c1"># def png16read(self:Path): return array(Image.open(self), dtype=np.uint16)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">TEST_DCM</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;images/sample.dcm&#39;</span><span class="p">)</span>
+<span class="n">dcm</span> <span class="o">=</span> <span class="n">TEST_DCM</span><span class="o">.</span><span class="n">dcmread</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="pixels" class="doc_header"><code>pixels</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L52" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pixels</code>()</p>
+</blockquote>
+<p><code>pixel_array</code> as a tensor</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="scaled_px" class="doc_header"><code>scaled_px</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L58" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>scaled_px</code>()</p>
+</blockquote>
+<p><a href="/medical.imaging#pixels"><code>pixels</code></a> scaled by <code>RescaleSlope</code> and <code>RescaleIntercept</code></p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="array_freqhist_bins" class="doc_header"><code>array_freqhist_bins</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L65" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>array_freqhist_bins</code>(<strong><code>n_bins</code></strong>=<em><code>100</code></em>)</p>
+</blockquote>
+<p>A numpy based function to split the range of pixel values into groups, such that each group has around the same number of pixels</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.freqhist_bins" class="doc_header"><code>Tensor.freqhist_bins</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L75" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.freqhist_bins</code>(<strong><code>n_bins</code></strong>=<em><code>100</code></em>)</p>
+</blockquote>
+<p>A function to split the range of pixel values into groups, such that each group has around the same number of pixels</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.hist_scaled_pt" class="doc_header"><code>Tensor.hist_scaled_pt</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L86" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.hist_scaled_pt</code>(<strong><code>brks</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.hist_scaled" class="doc_header"><code>Tensor.hist_scaled</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L95" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.hist_scaled</code>(<strong><code>brks</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.hist_scaled" class="doc_header"><code>Dataset.hist_scaled</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L105" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.hist_scaled</code>(<strong><code>brks</code></strong>=<em><code>None</code></em>, <strong><code>min_px</code></strong>=<em><code>None</code></em>, <strong><code>max_px</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.windowed" class="doc_header"><code>Tensor.windowed</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L113" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.windowed</code>(<strong><code>w</code></strong>, <strong><code>l</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.windowed" class="doc_header"><code>Dataset.windowed</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L123" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.windowed</code>(<strong><code>w</code></strong>, <strong><code>l</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="TensorCTScan" class="doc_header"><code>class</code> <code>TensorCTScan</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L144" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TensorCTScan</code>(<strong><code>x</code></strong>, <strong>**<code>kwargs</code></strong>) :: <a href="/torch_core#TensorImageBW"><code>TensorImageBW</code></a></p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="PILCTScan" class="doc_header"><code>class</code> <code>PILCTScan</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L147" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PILCTScan</code>() :: <a href="/vision.core#PILBase"><code>PILBase</code></a></p>
+</blockquote>
+<p>This class represents an image object.  To create
+:py:class:<code>~PIL.Image.Image</code> objects, use the appropriate factory
+functions.  There's hardly ever any reason to call the Image constructor
+directly.</p>
+<ul>
+<li>:py:func:<code>~PIL.Image.open</code></li>
+<li>:py:func:<code>~PIL.Image.new</code></li>
+<li>:py:func:<code>~PIL.Image.frombytes</code></li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.show" class="doc_header"><code>Dataset.show</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L150" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.show</code>(<strong><code>scale</code></strong>=<em><code>True</code></em>, <strong><code>cmap</code></strong>=<em><code>&lt;matplotlib.colors.LinearSegmentedColormap object at 0x7f85444d56d0&gt;</code></em>, <strong><code>min_px</code></strong>=<em><code>-1100</code></em>, <strong><code>max_px</code></strong>=<em><code>None</code></em>, <strong><code>ax</code></strong>=<em><code>None</code></em>, <strong><code>figsize</code></strong>=<em><code>None</code></em>, <strong><code>title</code></strong>=<em><code>None</code></em>, <strong><code>ctx</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scales</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dicom_windows</span><span class="o">.</span><span class="n">brain</span><span class="p">,</span> <span class="n">dicom_windows</span><span class="o">.</span><span class="n">subdural</span>
+<span class="n">titles</span> <span class="o">=</span> <span class="s1">&#39;raw&#39;</span><span class="p">,</span><span class="s1">&#39;normalized&#39;</span><span class="p">,</span><span class="s1">&#39;brain windowed&#39;</span><span class="p">,</span><span class="s1">&#39;subdural windowed&#39;</span>
+<span class="k">for</span> <span class="n">s</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scales</span><span class="p">,</span> <span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">imsize</span><span class="o">=</span><span class="mi">4</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">titles</span><span class="p">):</span>
+    <span class="n">dcm</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dcm</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">gist_ncar</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.pct_in_window" class="doc_header"><code>Dataset.pct_in_window</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L160" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.pct_in_window</code>(<strong><code>dcm</code></strong>:<code>Dataset</code>, <strong><code>w</code></strong>, <strong><code>l</code></strong>)</p>
+</blockquote>
+<p>% of pixels in the window <code>(w,l)</code></p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dcm</span><span class="o">.</span><span class="n">pct_in_window</span><span class="p">(</span><span class="o">*</span><span class="n">dicom_windows</span><span class="o">.</span><span class="n">brain</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="uniform_blur2d" class="doc_header"><code>uniform_blur2d</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L167" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>uniform_blur2d</code>(<strong><code>x</code></strong>, <strong><code>s</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ims</span> <span class="o">=</span> <span class="n">dcm</span><span class="o">.</span><span class="n">hist_scaled</span><span class="p">(),</span> <span class="n">uniform_blur2d</span><span class="p">(</span><span class="n">dcm</span><span class="o">.</span><span class="n">hist_scaled</span><span class="p">(),</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">show_images</span><span class="p">(</span><span class="n">ims</span><span class="p">,</span> <span class="n">titles</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;orig&#39;</span><span class="p">,</span> <span class="s1">&#39;blurred&#39;</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="gauss_blur2d" class="doc_header"><code>gauss_blur2d</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L176" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gauss_blur2d</code>(<strong><code>x</code></strong>, <strong><code>s</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.mask_from_blur" class="doc_header"><code>Tensor.mask_from_blur</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L183" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.mask_from_blur</code>(<strong><code>x</code></strong>:<code>Tensor</code>, <strong><code>window</code></strong>, <strong><code>sigma</code></strong>=<em><code>0.3</code></em>, <strong><code>thresh</code></strong>=<em><code>0.05</code></em>, <strong><code>remove_max</code></strong>=<em><code>True</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.mask_from_blur" class="doc_header"><code>Dataset.mask_from_blur</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L190" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.mask_from_blur</code>(<strong><code>x</code></strong>:<code>Dataset</code>, <strong><code>window</code></strong>, <strong><code>sigma</code></strong>=<em><code>0.3</code></em>, <strong><code>thresh</code></strong>=<em><code>0.05</code></em>, <strong><code>remove_max</code></strong>=<em><code>True</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mask</span> <span class="o">=</span> <span class="n">dcm</span><span class="o">.</span><span class="n">mask_from_blur</span><span class="p">(</span><span class="n">dicom_windows</span><span class="o">.</span><span class="n">brain</span><span class="p">)</span>
+<span class="n">wind</span> <span class="o">=</span> <span class="n">dcm</span><span class="o">.</span><span class="n">windowed</span><span class="p">(</span><span class="o">*</span><span class="n">dicom_windows</span><span class="o">.</span><span class="n">brain</span><span class="p">)</span>
+
+<span class="n">_</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">show_image</span><span class="p">(</span><span class="n">wind</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">show_image</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Reds</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="mask2bbox" class="doc_header"><code>mask2bbox</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L206" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mask2bbox</code>(<strong><code>mask</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bbs</span> <span class="o">=</span> <span class="n">mask2bbox</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+<span class="n">lo</span><span class="p">,</span><span class="n">hi</span> <span class="o">=</span> <span class="n">bbs</span>
+<span class="n">show_image</span><span class="p">(</span><span class="n">wind</span><span class="p">[</span><span class="n">lo</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">hi</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">lo</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">hi</span><span class="p">[</span><span class="mi">1</span><span class="p">]]);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="crop_resize" class="doc_header"><code>crop_resize</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L225" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>crop_resize</code>(<strong><code>x</code></strong>, <strong><code>crops</code></strong>, <strong><code>new_sz</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">px256</span> <span class="o">=</span> <span class="n">crop_resize</span><span class="p">(</span><span class="n">to_device</span><span class="p">(</span><span class="n">wind</span><span class="p">[</span><span class="kc">None</span><span class="p">]),</span> <span class="n">bbs</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">],</span> <span class="mi">128</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">show_image</span><span class="p">(</span><span class="n">px256</span><span class="p">)</span>
+<span class="n">px256</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.to_nchan" class="doc_header"><code>Tensor.to_nchan</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L238" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.to_nchan</code>(<strong><code>x</code></strong>:<code>Tensor</code>, <strong><code>wins</code></strong>, <strong><code>bins</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.to_nchan" class="doc_header"><code>Dataset.to_nchan</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L246" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.to_nchan</code>(<strong><code>x</code></strong>:<code>Dataset</code>, <strong><code>wins</code></strong>, <strong><code>bins</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.to_3chan" class="doc_header"><code>Tensor.to_3chan</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L251" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.to_3chan</code>(<strong><code>x</code></strong>:<code>Tensor</code>, <strong><code>win1</code></strong>, <strong><code>win2</code></strong>, <strong><code>bins</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.to_3chan" class="doc_header"><code>Dataset.to_3chan</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L256" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.to_3chan</code>(<strong><code>x</code></strong>:<code>Dataset</code>, <strong><code>win1</code></strong>, <strong><code>win2</code></strong>, <strong><code>bins</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">show_images</span><span class="p">(</span><span class="n">dcm</span><span class="o">.</span><span class="n">to_nchan</span><span class="p">([</span><span class="n">dicom_windows</span><span class="o">.</span><span class="n">brain</span><span class="p">,</span><span class="n">dicom_windows</span><span class="o">.</span><span class="n">subdural</span><span class="p">,</span><span class="n">dicom_windows</span><span class="o">.</span><span class="n">abdomen_soft</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.save_jpg" class="doc_header"><code>Tensor.save_jpg</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L261" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.save_jpg</code>(<strong><code>x</code></strong>:<code>Dataset'&gt;)</code>, <strong><code>path</code></strong>, <strong><code>wins</code></strong>, <strong><code>bins</code></strong>=<em><code>None</code></em>, <strong><code>quality</code></strong>=<em><code>90</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.save_jpg" class="doc_header"><code>Dataset.save_jpg</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L261" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.save_jpg</code>(<strong><code>x</code></strong>:<code>Dataset'&gt;)</code>, <strong><code>path</code></strong>, <strong><code>wins</code></strong>, <strong><code>bins</code></strong>=<em><code>None</code></em>, <strong><code>quality</code></strong>=<em><code>90</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.to_uint16" class="doc_header"><code>Tensor.to_uint16</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L269" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.to_uint16</code>(<strong><code>x</code></strong>:<code>Dataset'&gt;)</code>, <strong><code>bins</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.to_uint16" class="doc_header"><code>Dataset.to_uint16</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L269" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.to_uint16</code>(<strong><code>x</code></strong>:<code>Dataset'&gt;)</code>, <strong><code>bins</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Tensor.save_tif16" class="doc_header"><code>Tensor.save_tif16</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L275" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Tensor.save_tif16</code>(<strong><code>x</code></strong>:<code>Dataset'&gt;)</code>, <strong><code>path</code></strong>, <strong><code>bins</code></strong>=<em><code>None</code></em>, <strong><code>compress</code></strong>=<em><code>True</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.save_tif16" class="doc_header"><code>Dataset.save_tif16</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L275" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.save_tif16</code>(<strong><code>x</code></strong>:<code>Dataset'&gt;)</code>, <strong><code>path</code></strong>, <strong><code>bins</code></strong>=<em><code>None</code></em>, <strong><code>compress</code></strong>=<em><code>True</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">_</span><span class="p">,</span><span class="n">axs</span><span class="o">=</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">dcm</span><span class="o">.</span><span class="n">save_jpg</span><span class="p">(</span><span class="n">f</span><span class="o">/</span><span class="s1">&#39;test.jpg&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">dicom_windows</span><span class="o">.</span><span class="n">brain</span><span class="p">,</span><span class="n">dicom_windows</span><span class="o">.</span><span class="n">subdural</span><span class="p">])</span>
+    <span class="n">show_image</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="o">/</span><span class="s1">&#39;test.jpg&#39;</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dcm</span><span class="o">.</span><span class="n">save_tif16</span><span class="p">(</span><span class="n">f</span><span class="o">/</span><span class="s1">&#39;test.tif&#39;</span><span class="p">)</span>
+    <span class="n">show_image</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="o">/</span><span class="s1">&#39;test.tif&#39;</span><span class="p">)),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.set_pixels" class="doc_header"><code>Dataset.set_pixels</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L281" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.set_pixels</code>(<strong><code>px</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.zoom" class="doc_header"><code>Dataset.zoom</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L288" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.zoom</code>(<strong><code>ratio</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.zoom_to" class="doc_header"><code>Dataset.zoom_to</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L295" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.zoom_to</code>(<strong><code>sz</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="shape" class="doc_header"><code>shape</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/vision/core.py#L31" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>shape</code>(<strong><code>x</code></strong>:<code>Image</code>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dcm2</span> <span class="o">=</span> <span class="n">TEST_DCM</span><span class="o">.</span><span class="n">dcmread</span><span class="p">()</span>
+<span class="n">dcm2</span><span class="o">.</span><span class="n">zoom_to</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">dcm2</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span><span class="mi">90</span><span class="p">,</span><span class="mi">90</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dcm2</span> <span class="o">=</span> <span class="n">TEST_DCM</span><span class="o">.</span><span class="n">dcmread</span><span class="p">()</span>
+<span class="n">dcm2</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="n">dcm2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="Dataset.as_dict" class="doc_header"><code>Dataset.as_dict</code><a href="https://github.com/fastai/fastai2/tree/master/fastai2/medical/imaging.py#L318" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>Dataset.as_dict</code>(<strong><code>px_summ</code></strong>=<em><code>True</code></em>, <strong><code>window</code></strong>=<em><code>(80, 40)</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+</div>
+ 
+
+
+
+    <div class="tags">
+        
+    </div>
+
+</div>
+
+<hr class="shaded"/>
+
+<footer>
+            <div class="row">
+                <div class="col-lg-12 footer">
+                  <p><img src="/images/company_logo.png" alt="Company logo"/></p>
+               &copy;2020 fast.ai. All rights reserved. <br />
+ Site last generated: Jul 27, 2020 <br />
+                </div>
+            </div>
+</footer>
+
+
+        </div>
+    <!-- /.row -->
+</div>
+<!-- /.container -->
+</div>
+<!-- /#main -->
+    </div>
+
+</body>
+
+<!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-89522379-3','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+</html>
