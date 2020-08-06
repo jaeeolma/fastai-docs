@@ -57,4 +57,4 @@ description: "Documentation for the fastai library"
 # theme: jekyll-theme-cayman
 
 
-#baseurl: /
+baseurl: 
